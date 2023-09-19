@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebCrawler topzera</title>
+    <!-- Inclua o link para o arquivo CSS do Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-white p-4 shadow-md">
+        <!-- Barra de Pesquisa -->
+        <div class="max-w-screen-xl mx-auto relative">
+            <div class="relative text-gray-600 focus-within:text-gray-400">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                    <img src="lupa.png" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m0 0l-6-6m6 6l-6-6m6 6H3"></path>
+                    </svg>
+                </span>
+                <input type="search" name="search" id="search" placeholder="Pesquisar..." class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full">
+                <!-- Histórico de Pesquisa (inicialmente oculto) -->
+                <div id="searchHistory" class="hidden absolute left-0 w-full mt-2 bg-white border border-gray-300 shadow-md rounded-lg">
+                    <ul class="p-2">
+                        <!-- Itens do histórico de pesquisa serão adicionados aqui -->
+                    </ul>
+                    <button id="clearHistory" class="block mt-2 mx-auto px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Limpar Histórico</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-screen-xl mx-auto mt-4 p-4">
+        <!-- Título da Tabela -->
+        <h1 class="text-2xl font-semibold mb-4 text-center">Tabela - SA3 </h1>
+        <!-- Contêiner flexível para a tabela e a caixa "Informação 1" -->
+        <div class="flex flex-wrap">
+            <!-- Caixa 1 -->
+            <div class="w-full sm:w-auto bg-white p-4 shadow-md rounded-lg mb-4 sm:mr-4">
+                <h2 class="text-lg font-semibold mb-2">Informação</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+            <!-- Tabela com Campos e Descrições -->
+            <table class="w-full sm:w-auto md:w-3/5 lg:w-3/5 xl:w-3/5 border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="py-2 px-1 border border-gray-300 w-1/4">Campo</th>
+                        <th class="py-2 px-4 border border-gray-300 w-3/4">Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-1 border border-gray-300 text-center">A3_COD</td>
+                        <td class="py-2 px-4 border border-gray-300 text-center">Código Vendedor</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Adicione mais linhas conforme necessário -->
+    </tbody>
+    </table>
+</main>
+
+<script>
+    // Função para exibir o histórico de pesquisa ao clicar na barra de pesquisa
+    const searchInput = document.getElementById('search');
+    const searchHistory = document.getElementById('searchHistory');
+    const clearHistoryButton = document.getElementById('clearHistory');
+    
+    searchInput.addEventListener('focus', () => {
+        searchHistory.classList.remove('hidden');
+        displaySearchHistory();
+    });
+
+    // Função para ocultar o histórico de pesquisa ao clicar fora do campo de pesquisa
+    document.addEventListener('click', (event) => {
+        if (event.target !== searchInput && event.target !== searchHistory) {
+            searchHistory.classList.add('hidden');
+        }
+    });
+
+    // Função para salvar pesquisas no armazenamento local
+    function saveSearch(query) {
+        let searches = JSON.parse(localStorage.getItem('searches')) || [];
+        searches.unshift(query);
+        localStorage.setItem('searches', JSON.stringify(searches));
+    }
+
+    // Função para exibir o histórico de pesquisa
+    function displaySearchHistory() {
+        const searches = JSON.parse(localStorage.getItem('searches')) || [];
+        const ul = searchHistory.querySelector('ul');
+        ul.innerHTML = '';
+
+        if (searches.length > 0) {
+            searches.forEach(query => {
+                const li = document.createElement('li');
+                li.textContent = query;
+                ul.appendChild(li);
+            });
+        } else {
+            const li = document.createElement('li');
+            li.textContent = 'Nenhuma pesquisa recente.';
+            ul.appendChild(li);
+        }
+    }
+
+    // Ouvinte de evento para limpar o histórico de pesquisa
+    clearHistoryButton.addEventListener('click', () => {
+        localStorage.removeItem('searches');
+        displaySearchHistory();
+    });
+
+    // Ouvinte de evento para detectar a tecla "Enter" pressionada
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            const query = searchInput.value;
+            saveSearch(query);
+
+            // Limpa o texto da barra de pesquisa
+            searchInput.value = '';
+
+            // Exibe o histórico de pesquisa
+            displaySearchHistory();
+        }
+    });
+</script>
+</body>
+</html>
