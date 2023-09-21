@@ -5,8 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebCrawler topzera</title>
     <!-- Inclua o link para o arquivo CSS do Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+<style>
+#search:focus {
+    outline: none;
+}
+</style>
 <body class="bg-gray-100">
     <header class="bg-white p-4 shadow-md">
         <!-- Barra de Pesquisa -->
@@ -16,7 +22,7 @@
                     <img src="resources\lupa.png" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m0 0l-6-6m6 6l-6-6m6 6H3"></path>
                 </span>
-                <input type="search" name="search" id="search" placeholder="Pesquisar..." class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full">
+                <input type="text" name="search" id="search" placeholder="Pesquisar..." class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full">
                 <!-- Barra de Sugestões (inicialmente oculta) -->
                 <div id="searchSuggestions" class="hidden absolute left-0 w-full mt-2 bg-white border border-gray-300 shadow-md rounded-lg">
                     <ul id="suggestionList" class="p-2">
@@ -45,22 +51,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="py-2 px-1 border border-gray-300 text-center">A3_COD</td>
-                        <td class="py-2 px-4 border border-gray-300 text-center">Código do Vendedor</td>
+                    <tr id="A3_COD" class="py-2 px-1 border border-gray-300 text-center">
+                        <td>A3_COD</td>
+                        <td>Código do Vendedor</td>
                     </tr>
                 </tbody>
                 <tbody>
-                    <tr>
-                        <td class="py-2 px-1 border border-gray-300 text-center">A3_NOME</td>
-                        <td class="py-2 px-4 border border-gray-300 text-center">Nome do Vendedor</td>
+                    <tr id="A3_NOME" class="py-2 px-1 border border-gray-300 text-center">
+                        <td>A3_NOME</td>
+                        <td>Nome do Vendedor</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </main>
     <!-- Botão de Histórico de Pesquisa -->
-    <button id="openHistoryButton" class="fixed top-4 right-4 bg-gray-500 text-white p-2 rounded-full cursor-pointer">Histórico</button>
+    <button id="openHistoryButton" class="fixed top-4 right-4 text-gray-500 p-2 rounded-full cursor-pointer">
+        <i class="fas fa-bars"></i> <!-- Ícone do menu hambúrguer -->
+    </button>
     <!-- Caixa Modal para o Histórico de Pesquisa -->
     <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white p-4 rounded-lg max-w-md">
@@ -77,147 +85,6 @@
     </table>
 </main>
 
-<script>
-const searchInput = document.getElementById('search');
-const searchSuggestions = document.getElementById('searchSuggestions');
-const suggestionList = document.getElementById('suggestionList');
-const searchHistory = document.getElementById('searchHistory');
-const openHistoryButton = document.getElementById('openHistoryButton');
-const historyModal = document.getElementById('historyModal');
-const closeHistoryButton = document.getElementById('closeHistoryButton');
-const clearHistoryButton = document.getElementById('clearHistoryButton');
-let suggestions = []; // Array de sugestões da tabela
-
-clearHistoryButton.addEventListener('click', () => {
-    const confirmDelete = confirm('Deseja realmente apagar todo o histórico de pesquisa?');
-    if (confirmDelete) {
-        clearSearchHistory();
-    }
-});
-
-function clearSearchHistory() {
-    localStorage.removeItem('searchHistory'); // Remove o histórico do localStorage
-    searchHistory.innerHTML = ''; // Limpa a lista de histórico exibida na página
-    hideHistoryModal(); // Fecha o modal de histórico de pesquisa
-}
-
-// Extrai sugestões da tabela
-const tableRows = document.querySelectorAll('table tbody tr');
-tableRows.forEach(row => {
-    const campo = row.querySelector('td:nth-child(1)').textContent.trim();
-    const descricao = row.querySelector('td:nth-child(2)').textContent.trim();
-    suggestions.push(`${campo} - ${descricao}`);
-});
-
-searchInput.addEventListener('input', () => {
-    displaySearchSuggestions();
-});
-
-searchInput.addEventListener('click', () => {
-    displaySearchSuggestions();
-});
-
-searchInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Impede que o formulário seja enviado, se houver algum
-        const query = searchInput.value.trim();
-        if (query !== '') {
-            addToSearchHistory(query);
-        }
-        searchInput.value = ''; // Limpa o valor da barra de pesquisa
-        searchSuggestions.classList.add('hidden'); // Fecha a barra de sugestões ao pressionar Enter
-    }
-});
-
-openHistoryButton.addEventListener('click', () => {
-    showHistoryModal();
-});
-
-closeHistoryButton.addEventListener('click', () => {
-    hideHistoryModal();
-});
-
-
-function displaySearchSuggestions() {
-    const userQuery = searchInput.value.toLowerCase();
-    suggestionList.innerHTML = '';
-
-    if (userQuery === '') {
-        searchSuggestions.classList.add('hidden');
-        return;
-    }
-
-    let found = false;
-
-    suggestions.forEach(suggestion => {
-        const suggestionLC = suggestion.toLowerCase();
-        if (suggestionLC.includes(userQuery)) {
-            found = true;
-            const li = document.createElement('li');
-            const highlightedSuggestion = highlightMatch(suggestion, userQuery);
-            li.innerHTML = highlightedSuggestion;
-            li.addEventListener('click', () => {
-                const suggestionParts = suggestion.split(' - ');
-                if (suggestionParts.length === 2) {
-                    searchInput.value = suggestion; // Preenche a barra de pesquisa com a sugestão completa
-                } else {
-                    searchInput.value = suggestionParts[0]; // Preenche a barra de pesquisa apenas com o campo
-                }
-                searchSuggestions.classList.add('hidden'); // Esconde as sugestões
-            });
-            suggestionList.appendChild(li);
-        }
-    });
-
-    if (!found) {
-        searchSuggestions.classList.add('hidden');
-        return;
-    }
-
-    searchSuggestions.classList.remove('hidden');
-}
-
-
-    searchSuggestions.classList.remove('hidden');
-
-function highlightMatch(suggestion, query) {
-    const regex = new RegExp(`(${query})`, 'gi');
-    return suggestion.replace(regex, '<span class="bg-yellow-300">$1</span>');
-}
-
-function addToSearchHistory(query) {
-    const now = new Date();
-    const formattedDate = now.toLocaleDateString(); // Apenas a data, sem a hora
-
-    const historyItem = {
-        query: query,
-        date: formattedDate,
-    };
-
-    const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
-    history.push(historyItem);
-    localStorage.setItem('searchHistory', JSON.stringify(history));
-
-    const li = document.createElement('li');
-    li.textContent = `${formattedDate}: ${query}`;
-    searchHistory.appendChild(li);
-}
-
-function showHistoryModal() {
-    historyModal.classList.remove('hidden');
-}
-
-function hideHistoryModal() {
-    historyModal.classList.add('hidden');
-}
-
-// Recupera e exibe o histórico de pesquisa ao carregar a página
-const savedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-savedHistory.forEach(historyItem => {
-    const li = document.createElement('li');
-    li.textContent = `${historyItem.date}: ${historyItem.query}`;
-    searchHistory.appendChild(li);
-});
-</script>
+<script src="config.js"> </script>
 </body>
 </html>
