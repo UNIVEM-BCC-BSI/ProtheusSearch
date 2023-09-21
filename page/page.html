@@ -17,18 +17,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m0 0l-6-6m6 6l-6-6m6 6H3"></path>
                 </span>
                 <input type="search" name="search" id="search" placeholder="Pesquisar..." class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full">
-                <!-- Ícone do Menu Hamburguer (à direita da barra de pesquisa) -->
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 cursor-pointer text-gray-600 hover:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                    </svg>
-                </div>
-                <!-- Histórico de Pesquisa (inicialmente oculto) -->
-                <div id="searchHistory" class="hidden absolute left-0 w-full mt-2 bg-white border border-gray-300 shadow-md rounded-lg">
-                    <ul class="p-2">
-                        <!-- Itens do histórico de pesquisa e sugestões da tabela serão adicionados aqui -->
+                <!-- Barra de Sugestões (inicialmente oculta) -->
+                <div id="searchSuggestions" class="hidden absolute left-0 w-full mt-2 bg-white border border-gray-300 shadow-md rounded-lg">
+                    <ul id="suggestionList" class="p-2">
+                        <!-- Sugestões de pesquisa da tabela serão adicionadas aqui -->
                     </ul>
-                    <button id="clearHistory" class="block mt-2 mx-auto px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Limpar Histórico</button>
                 </div>
             </div>
         </div>
@@ -54,107 +47,177 @@
                 <tbody>
                     <tr>
                         <td class="py-2 px-1 border border-gray-300 text-center">A3_COD</td>
-                        <td class="py-2 px-4 border border-gray-300 text-center">Código Vendedor</td>
+                        <td class="py-2 px-4 border border-gray-300 text-center">Código do Vendedor</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-1 border border-gray-300 text-center">A3_NOME</td>
+                        <td class="py-2 px-4 border border-gray-300 text-center">Nome do Vendedor</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </main>
-
+    <!-- Botão de Histórico de Pesquisa -->
+    <button id="openHistoryButton" class="fixed top-4 right-4 bg-gray-500 text-white p-2 rounded-full cursor-pointer">Histórico</button>
+    <!-- Caixa Modal para o Histórico de Pesquisa -->
+    <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-4 rounded-lg max-w-md">
+            <h2 class="text-xl font-semibold mb-2">Histórico de Pesquisa</h2>
+            <ul id="searchHistory" class="list-disc pl-6">
+                <!-- Histórico de pesquisa será adicionado aqui -->
+            </ul>
+            <button id="closeHistoryButton" class="mt-4 bg-indigo-500 text-white p-2 rounded cursor-pointer">Fechar</button>
+            <button id="clearHistoryButton" class="mt-4 bg-red-500 text-white p-2 rounded cursor-pointer">Limpar Histórico</button>
+        </div>
+    </div>
     <!-- Adicione mais linhas conforme necessário -->
     </tbody>
     </table>
 </main>
 
 <script>
-    const searchInput = document.getElementById('search');
-    const searchHistory = document.getElementById('searchHistory');
-    const clearHistoryButton = document.getElementById('clearHistory');
-    let suggestions = []; // Array de sugestões da tabela
+const searchInput = document.getElementById('search');
+const searchSuggestions = document.getElementById('searchSuggestions');
+const suggestionList = document.getElementById('suggestionList');
+const searchHistory = document.getElementById('searchHistory');
+const openHistoryButton = document.getElementById('openHistoryButton');
+const historyModal = document.getElementById('historyModal');
+const closeHistoryButton = document.getElementById('closeHistoryButton');
+const clearHistoryButton = document.getElementById('clearHistoryButton');
+let suggestions = []; // Array de sugestões da tabela
 
-    // Extrai sugestões da tabela
-    const tableRows = document.querySelectorAll('table tbody tr');
-    tableRows.forEach(row => {
-        const campo = row.querySelector('td:nth-child(1)').textContent.trim();
-        const descricao = row.querySelector('td:nth-child(2)').textContent.trim();
-        suggestions.push(`${campo} - ${descricao}`);
-    });
+clearHistoryButton.addEventListener('click', () => {
+    const confirmDelete = confirm('Deseja realmente apagar todo o histórico de pesquisa?');
+    if (confirmDelete) {
+        clearSearchHistory();
+    }
+});
 
-    searchInput.addEventListener('focus', () => {
-        searchHistory.classList.remove('hidden');
-        displaySearchHistory();
-    });
+function clearSearchHistory() {
+    localStorage.removeItem('searchHistory'); // Remove o histórico do localStorage
+    searchHistory.innerHTML = ''; // Limpa a lista de histórico exibida na página
+    hideHistoryModal(); // Fecha o modal de histórico de pesquisa
+}
 
-    document.addEventListener('click', (event) => {
-        if (event.target !== searchInput && event.target !== searchHistory) {
-            searchHistory.classList.add('hidden');
+// Extrai sugestões da tabela
+const tableRows = document.querySelectorAll('table tbody tr');
+tableRows.forEach(row => {
+    const campo = row.querySelector('td:nth-child(1)').textContent.trim();
+    const descricao = row.querySelector('td:nth-child(2)').textContent.trim();
+    suggestions.push(`${campo} - ${descricao}`);
+});
+
+searchInput.addEventListener('input', () => {
+    displaySearchSuggestions();
+});
+
+searchInput.addEventListener('click', () => {
+    displaySearchSuggestions();
+});
+
+searchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Impede que o formulário seja enviado, se houver algum
+        const query = searchInput.value.trim();
+        if (query !== '') {
+            addToSearchHistory(query);
         }
-    });
+        searchInput.value = ''; // Limpa o valor da barra de pesquisa
+        searchSuggestions.classList.add('hidden'); // Fecha a barra de sugestões ao pressionar Enter
+    }
+});
 
-    function saveSearch(query) {
-        let searches = JSON.parse(localStorage.getItem('searches')) || [];
-        searches.unshift(query);
-        localStorage.setItem('searches', JSON.stringify(searches));
+openHistoryButton.addEventListener('click', () => {
+    showHistoryModal();
+});
+
+closeHistoryButton.addEventListener('click', () => {
+    hideHistoryModal();
+});
+
+
+function displaySearchSuggestions() {
+    const userQuery = searchInput.value.toLowerCase();
+    suggestionList.innerHTML = '';
+
+    if (userQuery === '') {
+        searchSuggestions.classList.add('hidden');
+        return;
     }
 
-    function displaySearchHistory() {
-        const searches = JSON.parse(localStorage.getItem('searches')) || [];
-        const ul = searchHistory.querySelector('ul');
-        ul.innerHTML = '';
+    let found = false;
 
-        if (searches.length > 0) {
-            searches.forEach(query => {
-                const li = document.createElement('li');
-                li.textContent = query;
-                ul.appendChild(li);
-            });
-        } else {
+    suggestions.forEach(suggestion => {
+        const suggestionLC = suggestion.toLowerCase();
+        if (suggestionLC.includes(userQuery)) {
+            found = true;
             const li = document.createElement('li');
-            ul.appendChild(li);
-        }
-
-        // Filtra sugestões com base na entrada do usuário
-        const userQuery = searchInput.value.toLowerCase();
-        if (userQuery.length > 0) {
-            suggestions.forEach(suggestion => {
-                const suggestionLC = suggestion.toLowerCase();
-                if (suggestionLC.includes(userQuery)) {
-                    const li = document.createElement('li');
-                    const highlightedSuggestion = highlightMatch(suggestion, userQuery);
-                    li.innerHTML = highlightedSuggestion;
-                    ul.appendChild(li);
+            const highlightedSuggestion = highlightMatch(suggestion, userQuery);
+            li.innerHTML = highlightedSuggestion;
+            li.addEventListener('click', () => {
+                const suggestionParts = suggestion.split(' - ');
+                if (suggestionParts.length === 2) {
+                    searchInput.value = suggestion; // Preenche a barra de pesquisa com a sugestão completa
+                } else {
+                    searchInput.value = suggestionParts[0]; // Preenche a barra de pesquisa apenas com o campo
                 }
+                searchSuggestions.classList.add('hidden'); // Esconde as sugestões
             });
-        }
-
-        ul.addEventListener('click', (event) => {
-            if (event.target.tagName === 'LI') {
-                searchInput.value = event.target.textContent;
-                searchInput.focus();
-            }
-        });
-    }
-
-    function highlightMatch(suggestion, query) {
-        const regex = new RegExp(`(${query})`, 'gi');
-        return suggestion.replace(regex, '<span class="bg-yellow-300">$1</span>');
-    }
-
-    clearHistoryButton.addEventListener('click', () => {
-        localStorage.removeItem('searches');
-        displaySearchHistory();
-    });
-
-    searchInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            const query = searchInput.value;
-            saveSearch(query);
-            searchInput.value = '';
-            displaySearchHistory();
+            suggestionList.appendChild(li);
         }
     });
 
-    searchInput.addEventListener('input', () => {
-        displaySearchHistory();
-    });
+    if (!found) {
+        searchSuggestions.classList.add('hidden');
+        return;
+    }
+
+    searchSuggestions.classList.remove('hidden');
+}
+
+
+    searchSuggestions.classList.remove('hidden');
+
+function highlightMatch(suggestion, query) {
+    const regex = new RegExp(`(${query})`, 'gi');
+    return suggestion.replace(regex, '<span class="bg-yellow-300">$1</span>');
+}
+
+function addToSearchHistory(query) {
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString(); // Apenas a data, sem a hora
+
+    const historyItem = {
+        query: query,
+        date: formattedDate,
+    };
+
+    const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    history.push(historyItem);
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+
+    const li = document.createElement('li');
+    li.textContent = `${formattedDate}: ${query}`;
+    searchHistory.appendChild(li);
+}
+
+function showHistoryModal() {
+    historyModal.classList.remove('hidden');
+}
+
+function hideHistoryModal() {
+    historyModal.classList.add('hidden');
+}
+
+// Recupera e exibe o histórico de pesquisa ao carregar a página
+const savedHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+savedHistory.forEach(historyItem => {
+    const li = document.createElement('li');
+    li.textContent = `${historyItem.date}: ${historyItem.query}`;
+    searchHistory.appendChild(li);
+});
 </script>
+</body>
+</html>
