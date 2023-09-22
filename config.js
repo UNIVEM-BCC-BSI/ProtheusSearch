@@ -8,11 +8,51 @@ const closeHistoryButton = document.getElementById('closeHistoryButton');
 const clearHistoryButton = document.getElementById('clearHistoryButton');
 let suggestions = []; // Array de sugestões da tabela
 
+
 clearHistoryButton.addEventListener('click', () => {
-    const confirmDelete = confirm('Deseja realmente apagar todo o histórico de pesquisa?');
-    if (confirmDelete) {
-        clearSearchHistory();
+    confirmationMessage.classList.remove('hidden'); // Mostra a mensagem de confirmação
+});
+
+confirmDeleteButton.addEventListener('click', () => {
+    clearSearchHistory(); // Limpa o histórico de pesquisa
+    confirmationMessage.classList.add('hidden'); // Oculta a mensagem de confirmação
+});
+
+cancelDeleteButton.addEventListener('click', () => {
+    confirmationMessage.classList.add('hidden'); // Oculta a mensagem de confirmação
+});
+document.getElementById('confirmDeleteButton').addEventListener('click', () => {
+    clearSearchHistory();
+    showSuccessMessage();
+});
+
+function showSuccessMessage() {
+    const successMessage = document.getElementById('successMessage');
+    successMessage.classList.remove('hidden');
+
+    setTimeout(() => {
+        successMessage.classList.add('hidden');
+    }, 3000); // Esconde a mensagem de sucesso após 3 segundos (ajustado para 3 segundos)
+}
+
+// Verifica se o histórico já foi limpado antes
+const hasHistoryCleared = localStorage.getItem('historyCleared');
+
+// Se o histórico já foi limpado antes, esconde a mensagem de sucesso
+if (hasHistoryCleared) {
+    const successMessage = document.getElementById('successMessage');
+    successMessage.classList.add('hidden');
+}
+
+clearHistoryButton.addEventListener('click', () => {
+    // Se o histórico já foi limpado antes, não faz nada
+    if (hasHistoryCleared) {
+        return;
     }
+
+    // Caso contrário, exibe a mensagem de sucesso e define que o histórico já foi limpado
+    showSuccessMessage();
+    localStorage.setItem('historyCleared', 'true');
 });
 
 function clearSearchHistory() {
