@@ -47,6 +47,36 @@ searchInput.addEventListener('keydown', (event) => {
         }
         searchInput.value = ''; // Limpa o valor da barra de pesquisa
         searchSuggestions.classList.add('hidden'); // Fecha a barra de sugestões ao pressionar Enter
+    } else if (event.key === 'Tab' && suggestions.length > 0) {
+        event.preventDefault(); // Impede o comportamento padrão da tecla "TAB"
+        const selectedSuggestion = suggestionList.querySelector('li.active');
+        if (!selectedSuggestion) {
+            // Se nenhuma sugestão estiver selecionada, selecione a primeira sugestão
+            suggestionList.firstChild.classList.add('active');
+            searchInput.value = suggestionList.firstChild.textContent; // Preenche a barra de pesquisa com a primeira sugestão
+        } else {
+            // Desselecione a sugestão atual
+            selectedSuggestion.classList.remove('active');
+            // Encontre a próxima sugestão
+            const nextSuggestion = selectedSuggestion.nextSibling;
+            if (nextSuggestion) {
+                // Se houver uma próxima sugestão, selecione-a
+                nextSuggestion.classList.add('active');
+                searchInput.value = nextSuggestion.textContent; // Preenche a barra de pesquisa com a sugestão selecionada
+            } else {
+                // Se não houver próxima sugestão, selecione a primeira sugestão
+                suggestionList.firstChild.classList.add('active');
+                searchInput.value = suggestionList.firstChild.textContent; // Preenche a barra de pesquisa com a primeira sugestão
+            }
+        }
+    }
+});
+
+// Adicione um evento de escuta para desativar a sugestão selecionada ao clicar em qualquer lugar da página
+document.addEventListener('click', () => {
+    const selectedSuggestion = suggestionList.querySelector('li.active');
+    if (selectedSuggestion) {
+        selectedSuggestion.classList.remove('active');
     }
 });
 
@@ -100,7 +130,6 @@ function displaySearchSuggestions() {
     searchSuggestions.classList.remove('hidden');
 }
 
-    searchSuggestions.classList.remove('hidden');
 
 function highlightMatch(suggestion, query) {
     const regex = new RegExp(`(${query})`, 'gi');

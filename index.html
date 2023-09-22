@@ -15,14 +15,20 @@
 </style>
 <body class="bg-gray-100">
     <header class="bg-white p-4 shadow-md">
-        <!-- Barra de Pesquisa -->
+        <!-- Barra de Pesquisa Responsiva -->
         <div class="max-w-screen-xl mx-auto relative">
             <div class="relative text-gray-600 focus-within:text-gray-400">
                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
                     <img src="resources\lupa.png" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m0 0l-6-6m6 6l-6-6m6 6H3"></path>
                 </span>
-                <input type="text" name="search" id="search" placeholder="Pesquisar..." class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full">
+                <input type="text" name="search" id="search" placeholder="Pesquisar..." class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full sm:w-3/4 md:w-1/2 lg:w-2/4 xl:w-3/4 pr-10">
+                <!-- Ícone do menu hambúrguer no canto direito da barra de pesquisa -->
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <button id="openHistoryButton" class="text-gray-500 p-2 rounded-full cursor-pointer">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
                 <!-- Barra de Sugestões (inicialmente oculta) -->
                 <div id="searchSuggestions" class="hidden absolute left-0 w-full mt-2 bg-white border border-gray-300 shadow-md rounded-lg">
                     <ul id="suggestionList" class="p-2">
@@ -34,41 +40,39 @@
     </header>
     <main class="max-w-screen-xl mx-auto mt-4 p-4">
         <!-- Título da Tabela -->
-        <h1 class="text-2xl font-semibold mb-4 text-center">Tabela - SA3 </h1>
+        <h1 class="text-2xl font-semibold mb-4 text-center" style="margin-right: 350px;">Tabela - SA3</h1>
         <!-- Contêiner flexível para a tabela e a caixa "Informação 1" -->
         <div class="flex flex-wrap">
-            <!-- Caixa 1 -->
-            <div class="w-full sm:w-auto bg-white p-4 shadow-md rounded-lg mb-4 sm:mr-4">
+            <!-- Tabela Responsiva com Colunas Flexíveis -->
+            <div class="overflow-x-auto w-full sm:w-3/4 lg:w-3/4 pr-4">
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="py-2 px-1 border border-gray-300 w-1/2 sm:w-1/4">Campo</th>
+                            <th class="py-2 px-4 border border-gray-300 w-1/2 sm:w-3/4">Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="A3_COD" class="py-2 px-1 border border-gray-300 text-center">
+                            <td>A3_COD</td>
+                            <td>Código do Vendedor</td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr id="A3_NOME" class="py-2 px-1 border border-gray-300 text-center">
+                            <td>A3_NOME</td>
+                            <td>Nome do Vendedor</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+           <!-- Caixa 1 -->
+            <div class="w-full sm:w-1/4 lg:w-1/4 bg-white p-4 shadow-md rounded-lg mb-4">
                 <h2 class="text-lg font-semibold mb-2">Informação</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
             </div>
-            <!-- Tabela com Campos e Descrições -->
-            <table class="w-full sm:w-auto md:w-3/5 lg:w-3/5 xl:w-3/5 border-collapse border border-gray-300">
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th class="py-2 px-1 border border-gray-300 w-1/4">Campo</th>
-                        <th class="py-2 px-4 border border-gray-300 w-3/4">Descrição</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr id="A3_COD" class="py-2 px-1 border border-gray-300 text-center">
-                        <td>A3_COD</td>
-                        <td>Código do Vendedor</td>
-                    </tr>
-                </tbody>
-                <tbody>
-                    <tr id="A3_NOME" class="py-2 px-1 border border-gray-300 text-center">
-                        <td>A3_NOME</td>
-                        <td>Nome do Vendedor</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </main>
-    <!-- Botão de Histórico de Pesquisa -->
-    <button id="openHistoryButton" class="fixed top-4 right-4 text-gray-500 p-2 rounded-full cursor-pointer">
-        <i class="fas fa-bars"></i> <!-- Ícone do menu hambúrguer -->
-    </button>
     <!-- Caixa Modal para o Histórico de Pesquisa -->
     <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white p-4 rounded-lg max-w-md">
@@ -80,11 +84,6 @@
             <button id="clearHistoryButton" class="mt-4 bg-red-500 text-white p-2 rounded cursor-pointer">Limpar Histórico</button>
         </div>
     </div>
-    <!-- Adicione mais linhas conforme necessário -->
-    </tbody>
-    </table>
-</main>
-
-<script src="config.js"> </script>
+    <script src="config.js"> </script>
 </body>
 </html>
