@@ -32,7 +32,7 @@ function showSuccessMessage() {
 
     setTimeout(() => {
         successMessage.classList.add('hidden');
-    }, 3000); // Esconde a mensagem de sucesso após 3 segundos (ajustado para 3 segundos)
+    }, 1500); // Esconde a mensagem de sucesso após 3 segundos (ajustado para 3 segundos)
 }
 
 // Barra de Pesquisa no Histórico
@@ -109,37 +109,85 @@ searchInput.addEventListener('click', () => {
 });
 
 searchInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault(); // Impede que o formulário seja enviado, se houver algum
+// Dentro do evento de pressionar Enter no campo de pesquisa
+if (event.key === 'Enter') {
+    const selectedSuggestion = suggestionList.querySelector('li.active');
+    if (selectedSuggestion) {
+        // Se uma sugestão estiver selecionada, use o valor da sugestão como pesquisa
+        const suggestionValue = selectedSuggestion.textContent;
+        searchInput.value = suggestionValue;
+
+        // Salve a pesquisa no histórico
+        addToSearchHistory(suggestionValue);
+
+        // Oculte as sugestões
+        searchSuggestions.classList.add('hidden');
+
+        // Limpa a classe "active" da sugestão selecionada
+        selectedSuggestion.classList.remove('active');
+    } else {
+        // Se nenhuma sugestão estiver selecionada, use o valor do campo de pesquisa
         const query = searchInput.value.trim();
         if (query !== '') {
+            // Salve a pesquisa no histórico
             addToSearchHistory(query);
-            scrollToTableRow(query);
         }
-        searchInput.value = ''; // Limpa o valor da barra de pesquisa
-        searchSuggestions.classList.add('hidden'); // Fecha a barra de sugestões ao pressionar Enter
-    } else if (event.key === 'Tab' && suggestions.length > 0) {
-        event.preventDefault(); // Impede o comportamento padrão da tecla "TAB"
-        const selectedSuggestion = suggestionList.querySelector('li.active');
-        if (!selectedSuggestion) {
-            // Se nenhuma sugestão estiver selecionada, selecione a primeira sugestão
-            suggestionList.firstChild.classList.add('active');
-            searchInput.value = suggestionList.firstChild.textContent; // Preenche a barra de pesquisa com a primeira sugestão
-        } else {
-            // Desselecione a sugestão atual
-            selectedSuggestion.classList.remove('active');
-            // Encontre a próxima sugestão
-            const nextSuggestion = selectedSuggestion.nextSibling;
-            if (nextSuggestion) {
-                // Se houver uma próxima sugestão, selecione-a
-                nextSuggestion.classList.add('active');
-                searchInput.value = nextSuggestion.textContent; // Preenche a barra de pesquisa com a sugestão selecionada
+    }
+
+    // Limpa o campo de pesquisa após salvar a pesquisa no histórico
+    searchInput.value = '';
+
+    // Oculta as sugestões após pressionar Enter
+    searchSuggestions.classList.add('hidden');
+} else if (event.key === 'Tab') {
+        if (!searchSuggestions.classList.contains('hidden') && suggestions.length > 0) {
+            event.preventDefault(); // Impede o comportamento padrão da tecla "TAB"
+            const selectedSuggestion = suggestionList.querySelector('li.active');
+            if (!selectedSuggestion) {
+                // Se nenhuma sugestão estiver selecionada, selecione a primeira sugestão
+                const firstSuggestion = suggestionList.querySelector('li');
+                if (firstSuggestion) {
+                    firstSuggestion.classList.add('active', 'suggestion-indicator');
+                    searchInput.value = firstSuggestion.textContent; // Preenche a barra de pesquisa com a primeira sugestão
+                }
             } else {
-                // Se não houver próxima sugestão, selecione a primeira sugestão
-                suggestionList.firstChild.classList.add('active');
-                searchInput.value = suggestionList.firstChild.textContent; // Preenche a barra de pesquisa com a primeira sugestão
+                // Desselecione a sugestão atual
+                selectedSuggestion.classList.remove('active', 'suggestion-indicator');
+                // Encontre a próxima sugestão
+                const nextSuggestion = selectedSuggestion.nextSibling;
+                if (nextSuggestion) {
+                    // Se houver uma próxima sugestão, selecione-a
+                    nextSuggestion.classList.add('active', 'suggestion-indicator');
+                    searchInput.value = nextSuggestion.textContent; // Preenche a barra de pesquisa com a sugestão selecionada
+                } else {
+                    // Se não houver próxima sugestão, selecione a primeira sugestão
+                    const firstSuggestion = suggestionList.querySelector('li');
+                    if (firstSuggestion) {
+                        firstSuggestion.classList.add('active', 'suggestion-indicator');
+                        searchInput.value = firstSuggestion.textContent; // Preenche a barra de pesquisa com a primeira sugestão
+                    }
+                }
             }
         }
+    }
+});
+// Fechar a lista de sugestões ao pressionar a tecla 'ESC'
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        searchSuggestions.classList.add('hidden');
+    }
+});
+searchInput.addEventListener('click', (event) => {
+    event.stopPropagation();
+});
+
+// Fechar a lista de sugestões ao clicar em qualquer lugar da tela (exceto na barra de pesquisa)
+document.addEventListener('click', (event) => {
+    const isSearchInput = event.target === searchInput;
+    const isSuggestionList = event.target === suggestionList || suggestionList.contains(event.target);
+
+    if (!isSearchInput && !isSuggestionList) {
+        searchSuggestions.classList.add('hidden');
     }
 });
 

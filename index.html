@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,15 +15,18 @@
         outline: none;
     }
     .info-box {
-        max-width: 250px; 
-        max-height: 125px; 
+        max-width: 250px;
+        max-height: 125px;
+    }
+    /* CSS para o indicador de seleção */
+    .suggestion-indicator{
+        background-color: #eaeaea;;
     }
     /* Estilo para o histórico de pesquisa */
     #searchHistory {
         list-style: none;
         padding: 0;
     }
-    
     #searchHistory li {
         display: flex;
         justify-content: space-between;
@@ -34,15 +38,12 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
-    
     #searchHistory li:hover {
         background-color: #e5e5e5;
     }
-    
     #searchHistory li span {
         flex: 1;
     }
-    
     #searchHistory li button {
         background-color: #e74c3c;
         color: white;
@@ -52,11 +53,11 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
-    
     #searchHistory li button:hover {
         background-color: #c0392b;
     }
-    </style>
+</style>
+
 <body class="bg-gray-100">
     <header class="bg-white p-4 shadow-md">
         <!-- Barra de Pesquisa Responsiva -->
@@ -64,9 +65,11 @@
             <div class="relative text-gray-600 focus-within:text-gray-400">
                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
                     <img src="resources\lupa.png" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m0 0l-6-6m6 6l-6-6m6 6H3"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m0 0l-6-6m6 6l-6-6m6 6H3"></path>
                 </span>
-                <input type="text" name="search" id="search" placeholder="Pesquisar..." class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full sm:w-3/4 md:w-1/2 lg:w-2/4 xl:w-3/4 pr-10">
+                <input type="text" name="search" id="search" placeholder="Pesquisar..."
+                    class="py-2 text-sm text-black placeholder-gray-400 border border-gray-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 rounded-full pl-10 w-full sm:w-3/4 md:w-1/2 lg:w-2/4 xl:w-3/4 pr-10">
                 <!-- Ícone do menu hambúrguer no canto direito da barra de pesquisa -->
                 <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                     <button id="openHistoryButton" class="text-gray-500 p-2 rounded-full cursor-pointer">
@@ -74,7 +77,8 @@
                     </button>
                 </div>
                 <!-- Barra de Sugestões (inicialmente oculta) -->
-                <div id="searchSuggestions" class="hidden absolute left-0 w-full mt-2 bg-white border border-gray-300 shadow-md rounded-lg">
+                <div id="searchSuggestions"
+                    class="hidden absolute left-0 w-full mt-2 bg-white border border-gray-300 shadow-md rounded-lg">
                     <ul id="suggestionList" class="p-2">
                         <!-- Sugestões de pesquisa da tabela serão adicionadas aqui -->
                     </ul>
@@ -122,35 +126,33 @@
                     </tbody>
                 </table>
             </div>
-           <!-- Caixa 1 -->
-           <div class="w-full sm:w-1/4 lg:w-1/4 bg-white p-4 shadow-md rounded-lg mb-4 info-box">
-            <h2 class="text-lg font-semibold mb-2">Informação</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </div>
+            <!-- Caixa 1 -->
+            <div class="w-full sm:w-1/4 lg:w-1/4 bg-white p-4 shadow-md rounded-lg mb-4 info-box">
+                <h2 class="text-lg font-semibold mb-2">Informação</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
         </div>
     </main>
-   <!-- Caixa Modal para o Histórico de Pesquisa -->
-<div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white p-4 rounded-lg max-w-md">
-        <h2 class="text-xl font-semibold mb-2">Histórico de Pesquisa</h2>
-        
-        <!-- Barra de Pesquisa no Histórico (Dentro da Caixa Modal) -->
-        <input
-            type="text"
-            id="searchHistoryInput"
-            class="w-full p-2 mb-2 border border-gray-300 rounded-md"
-            placeholder="Pesquisar no histórico..."
-        />
-        
-        <!-- Lista de Histórico de Pesquisa (Dentro da Caixa Modal) -->
-        <ul id="searchHistory" class="list-disc pl-6 overflow-y-auto max-h-40 border border-gray-300 rounded-md">
-            <!-- Histórico de pesquisa será adicionado aqui -->
-        </ul>
+    <!-- Caixa Modal para o Histórico de Pesquisa -->
+    <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-4 rounded-lg max-w-md">
+            <h2 class="text-xl font-semibold mb-2">Histórico de Pesquisa</h2>
 
-        <button id="closeHistoryButton" class="mt-4 bg-indigo-500 text-white p-2 rounded cursor-pointer">Fechar</button>
-        <button id="clearHistoryButton" class="mt-4 bg-red-500 text-white p-2 rounded cursor-pointer">Limpar Histórico</button>
+            <!-- Barra de Pesquisa no Histórico (Dentro da Caixa Modal) -->
+            <input type="text" id="searchHistoryInput" class="w-full p-2 mb-2 border border-gray-300 rounded-md"
+                placeholder="Pesquisar no histórico..." />
+
+            <!-- Lista de Histórico de Pesquisa (Dentro da Caixa Modal) -->
+            <ul id="searchHistory" class="list-disc pl-6 overflow-y-auto max-h-40 border border-gray-300 rounded-md">
+                <!-- Histórico de pesquisa será adicionado aqui -->
+            </ul>
+
+            <button id="closeHistoryButton"
+                class="mt-4 bg-indigo-500 text-white p-2 rounded cursor-pointer">Fechar</button>
+            <button id="clearHistoryButton" class="mt-4 bg-red-500 text-white p-2 rounded cursor-pointer">Limpar
+                Histórico</button>
+        </div>
     </div>
-</div>
     <!-- Caixa Modal para o Histórico de Pesquisa -->
     <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white p-4 rounded-lg max-w-md">
@@ -158,26 +160,32 @@
             <ul id="searchHistory" class="list-disc pl-6 max-h-48 overflow-y-auto">
                 <!-- Histórico de pesquisa será adicionado aqui -->
             </ul>
-            <button id="closeHistoryButton" class="mt-4 bg-indigo-500 text-white p-2 rounded cursor-pointer">Fechar</button>
-            <button id="clearHistoryButton" class="mt-4 bg-red-500 text-white p-2 rounded cursor-pointer">Limpar Histórico</button>
+            <button id="closeHistoryButton"
+                class="mt-4 bg-indigo-500 text-white p-2 rounded cursor-pointer">Fechar</button>
+            <button id="clearHistoryButton" class="mt-4 bg-red-500 text-white p-2 rounded cursor-pointer">Limpar
+                Histórico</button>
         </div>
     </div>
     <div id="confirmationMessage" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-6 rounded-lg max-w-md text-center shadow-md">
-            <p class="text-xl font-semibold mb-4">Você tem certeza de que deseja apagar todo o histórico de pesquisa?</p>
+            <p class="text-xl font-semibold mb-4">Você tem certeza de que deseja apagar todo o histórico de pesquisa?
+            </p>
             <div class="flex justify-center space-x-4">
-                <button id="confirmDeleteButton" class="bg-red-500 text-white p-2 rounded cursor-pointer hover:bg-red-600">Sim</button>
-                <button id="cancelDeleteButton" class="bg-gray-300 text-black p-2 rounded cursor-pointer hover:bg-gray-400">Cancelar</button>
+                <button id="confirmDeleteButton"
+                    class="bg-red-500 text-white p-2 rounded cursor-pointer hover:bg-red-600">Sim</button>
+                <button id="cancelDeleteButton"
+                    class="bg-gray-300 text-black p-2 rounded cursor-pointer hover:bg-gray-400">Cancelar</button>
             </div>
         </div>
     </div>
-    
-<!-- Mensagem de sucesso após limpar o histórico -->
-<div id="successMessage" class="fixed inset-x-0 bottom-0 mb-4 flex items-center justify-end right-0 mr-4">
-    <div class="bg-green-500 text-white p-2 rounded shadow-lg">
-        <p class="text-sm font-semibold">Histórico de pesquisa apagado com sucesso!</p>
+
+    <!-- Mensagem de sucesso após limpar o histórico -->
+    <div id="successMessage" class="fixed inset-x-0 bottom-0 mb-4 flex items-center justify-end right-0 mr-4">
+        <div class="bg-green-500 text-white p-2 rounded shadow-lg">
+            <p class="text-sm font-semibold">Histórico de pesquisa apagado com sucesso!</p>
+        </div>
     </div>
-</div>
+    <div class="suggestion-indicator"></div>
     <script src="config.js"> </script>
 </body>
 </html>
