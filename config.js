@@ -8,6 +8,30 @@ const closeHistoryButton = document.getElementById('closeHistoryButton');
 const clearHistoryButton = document.getElementById('clearHistoryButton');
 let suggestions = []; // Array de sugestões da tabela
 
+ // Variável global para armazenar a pesquisa completa
+ var pesquisaCompleta = "";
+
+ // Função para verificar se o Enter foi pressionado
+ function verificarEnter(event) {
+   if (event.keyCode === 13) {
+     // Quando o usuário pressiona Enter, armazene o valor completo da pesquisa
+     pesquisaCompleta = document.getElementById("search").value;
+   }
+ }
+
+ // Função para armazenar o valor da pesquisa quando o usuário sai do campo de pesquisa
+ function armazenarPesquisa() {
+   // Obtenha o valor digitado pelo usuário
+   var valorDaPesquisa = document.getElementById("search").value;
+
+   // Atualize a pesquisa completa apenas se o valor não estiver vazio
+   if (valorDaPesquisa.trim() !== "") {
+     pesquisaCompleta = valorDaPesquisa;
+   }
+
+   // Faça algo com o valor da pesquisa completa
+   console.log("Valor da pesquisa completa: " + pesquisaCompleta);
+ }
 
 clearHistoryButton.addEventListener('click', () => {
     confirmationMessage.classList.remove('hidden'); // Mostra a mensagem de confirmação
