@@ -129,6 +129,28 @@
         </div>
         </div>
     </main>
+   <!-- Caixa Modal para o Histórico de Pesquisa -->
+<div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-4 rounded-lg max-w-md">
+        <h2 class="text-xl font-semibold mb-2">Histórico de Pesquisa</h2>
+        
+        <!-- Barra de Pesquisa no Histórico (Dentro da Caixa Modal) -->
+        <input
+            type="text"
+            id="searchHistoryInput"
+            class="w-full p-2 mb-2 border border-gray-300 rounded-md"
+            placeholder="Pesquisar no histórico..."
+        />
+        
+        <!-- Lista de Histórico de Pesquisa (Dentro da Caixa Modal) -->
+        <ul id="searchHistory" class="list-disc pl-6 overflow-y-auto max-h-40 border border-gray-300 rounded-md">
+            <!-- Histórico de pesquisa será adicionado aqui -->
+        </ul>
+
+        <button id="closeHistoryButton" class="mt-4 bg-indigo-500 text-white p-2 rounded cursor-pointer">Fechar</button>
+        <button id="clearHistoryButton" class="mt-4 bg-red-500 text-white p-2 rounded cursor-pointer">Limpar Histórico</button>
+    </div>
+</div>
     <!-- Caixa Modal para o Histórico de Pesquisa -->
     <div id="historyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
         <div class="bg-white p-4 rounded-lg max-w-md">

@@ -35,6 +35,37 @@ function showSuccessMessage() {
     }, 3000); // Esconde a mensagem de sucesso após 3 segundos (ajustado para 3 segundos)
 }
 
+// Barra de Pesquisa no Histórico
+// Barra de Pesquisa no Histórico
+const searchHistoryInput = document.getElementById('searchHistoryInput');
+searchHistoryInput.addEventListener('input', () => {
+    filterSearchHistory();
+});
+
+// Filtra o Histórico de Pesquisa com base no que o usuário digita
+function filterSearchHistory() {
+    const query = searchHistoryInput.value.toLowerCase();
+    const historyItems = document.querySelectorAll('#searchHistory li');
+    historyItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(query)) {
+            // Remove tags <mark> existentes para redefinir o destaque
+            item.innerHTML = item.textContent;
+            // Destaca o texto correspondente
+            const highlightedText = highlightMatch(item.textContent, query);
+            item.innerHTML = highlightedText;
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+// Função para destacar o texto correspondente com tags <mark>
+function highlightMatch(text, query) {
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+}
 // Verifica se o histórico já foi limpado antes
 const hasHistoryCleared = localStorage.getItem('historyCleared');
 
