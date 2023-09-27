@@ -27,8 +27,8 @@ if response.status_code == 200:
         url_do_link = a_element[i]['href']
         textterceiro=td[(2+(i*6))].text
 
-        print("Texto do link:", texto_do_link)
+        print("Texto do link: ", texto_do_link)
         print("URL do link:", url_do_link)
-        print(textterceiro)
+        print("\n",textterceiro)
 else:
     print("nada")
