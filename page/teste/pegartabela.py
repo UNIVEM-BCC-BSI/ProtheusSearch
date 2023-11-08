@@ -26,17 +26,19 @@ if response.status_code==200:
         texto_do_link = aelement[h].text
 
                 #pega os ekementos td que sao as descrições da posicao começando em 2 e somando 2*h para sempre conseguir pegar a descrição
+        
         textterceiro=td[(2+(h*6))].text
-        pedro.append(texto_do_link)
-        pedro.append(textterceiro)
-        if h+1 == len(aelement):
-            pedro.append([])
+        codigo=texto_do_link
+        descricao=textterceiro
+        itens= {"codigo":codigo,"descricao":descricao}
+        pedro.append(itens)
         with open("pedro.json", "w") as arquivo_json:
-            json.dump(pedro, arquivo_json)
+            json.dump(pedro, arquivo_json,indent=4)
+
 
     ul=soup.find("ul", id="tabsUL")
     lista=ul.find_all("li")
-    for i in range(4):
+    for i in range(len(lista)):
         a=lista[i].find_all("a")
         x=a[0]['href']
         url=f"https://terminaldeinformacao.com/wp-content/tabelas/{x}"
@@ -52,6 +54,8 @@ if response.status_code==200:
 
             #pega o primeiro elemento html que tem table
             table_element = soup.find('table')
+            h1=soup.find("h1")
+            nome=h1.text
 
             # pega o primeiro elemento tbody dentro da table anterior
             tb=table_element.find('tbody')
@@ -69,13 +73,12 @@ if response.status_code==200:
 
                 #pega os ekementos td que sao as descrições da posicao começando em 2 e somando 2*j para sempre conseguir pegar a descrição
                 textterceiro=td[(2+(j*6))].text
-                pedro.append(texto_do_link)
-                pedro.append(textterceiro)
-                if j+1==len(a_element):
-                    pedro.append([])
-
+                codigo=texto_do_link
+                descricao=textterceiro
+                itens= {"codigo":codigo,"descricao":descricao}
+                pedro.append(itens)
                 with open("pedro.json", "w") as arquivo_json:
-                    json.dump(pedro, arquivo_json)
+                    json.dump(pedro, arquivo_json,indent=4)
 
                 
 
