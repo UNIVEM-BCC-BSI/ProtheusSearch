@@ -8,6 +8,39 @@ const closeHistoryButton = document.getElementById('closeHistoryButton');
 const clearHistoryButton = document.getElementById('clearHistoryButton');
 let suggestions = []; // Array de sugestões da tabela
 
+// Faz uma solicitação GET para a rota /buscar_dados da sua API
+// Função para buscar dados da API e atualizar a tabela
+function fetchDataAndPopulateTable() {
+    // Fazer a solicitação à API e receber os dados
+    fetch('/buscar_dados')
+      .then(response => response.json())
+      .then(data => {
+        // Selecionar a tabela
+        const table = document.getElementById('data-table');
+  
+        // Limpar o conteúdo atual da tabela
+        while (table.firstChild) {
+          table.removeChild(table.firstChild);
+        }
+  
+        // Loop através dos dados da API e adicionar linhas à tabela
+        data.forEach(item => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td class="py-2 px-1 border border-gray-300 w-1/2 sm:w-1/4">${item.codigo}</td>
+            <td class="py-2 px-4 border border-gray-300 w-1/2 sm:w-3/4">${item.descricao}</td>
+          `;
+          table.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('Erro ao buscar dados da API:', error);
+      });
+  }
+  
+  // Chame a função para buscar dados e atualizar a tabela
+fetchDataAndPopulateTable();
+  
  // Variável global para armazenar a pesquisa completa
  var pesquisaCompleta = "";
 
