@@ -1,8 +1,12 @@
 import json
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///protheus_search.db'
 db = SQLAlchemy(app)
 
@@ -14,7 +18,7 @@ class protheus_tabelas(db.Model):
 # Adicione a seguinte função para criar o contexto de aplicação
 def criar_contexto_aplicacao():
     with app.app_context():
-        with open("crawlerObject.json", "r") as json_object:
+        with open("API/crawlerObject.json", "r") as json_object:
             crawlerObject = json.load(json_object)
 
         for item in crawlerObject:
@@ -33,6 +37,7 @@ if __name__ == '__main__':
     # Crie o contexto de aplicação antes de iniciar o servidor
     with app.app_context():
         db.create_all()
+        criar_contexto_aplicacao()
 
     # Inicie o servidor Flask
     app.run(debug=True)
